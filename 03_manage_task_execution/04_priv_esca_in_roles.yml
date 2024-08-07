@@ -1,0 +1,5 @@
+- name: Example play with one role
+  hosts: localhost
+  roles:
+  - role: john.webapp
+    become: true # Privilege Escalation in Roles

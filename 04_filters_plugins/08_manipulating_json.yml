@@ -1,0 +1,35 @@
+---
+- name: Hashing, Encoding, and Manipulating Strings
+  hosts: localhost
+  gather_facts: false
+  tasks:
+
+# JSON queries
+  - name: Get the 'name' elements from the list of dictionaries in 'hosts'
+    vars:
+      hosts:
+      - name: bastion
+        ip:
+          - 172.25.250.254
+          - 172.25.252.1
+      - name: classroom
+        ip:
+          - 172.25.252.254
+    assert:
+      that:
+      - "{{ hosts | json_query('[*].name') }} is eq( ['bastion','classroom'] )"
+
+# Parsing and encoding data structures
+# Data structures serialize to JSON or YAML format with the to_json and to_yaml filters. Use
+# to_nice_json and to_nice_yaml filters to obtain a formatted human-readable output.
+  - name: Convert between JSON and YAML format
+    vars:
+      hosts:
+      - name: bastion
+        ip:
+            - 172.25.250.254
+            - 172.25.252.1
+      hosts_json: '[{"name": "bastion", "ip": ["172.25.250.254", "172.25.252.1"]}]'
+    assert:
+      that:
+      - "'{{ hosts | to_json }}' is eq( hosts_json )"

@@ -1,0 +1,31 @@
+---
+- name: Mathematical Calculations
+  hosts: localhost
+  gather_facts: true
+#  vars: 
+#    my_value: value
+    #my_var: value
+# +   add
+# -   subtract
+# /   floating point division
+# //  integer division
+# %   remainder of integer division
+# *   Multiply
+# **  Raise the left number to the power of the right number
+
+  tasks:
+  - debug:
+      msg: "{{ ( ansible_facts['date_time']['hour'] | int ) + 1 }}" # string to int
+
+  - debug:
+      msg: "{{ 1764 | root }}" # root
+
+# Manipulating Lists max, min, sum
+  - debug:
+      msg: "{{ [2, 4, 6, 8, 10, 12] | sum }}"  # sum
+
+
+
+
+# Jinja2 filters document
+# https://jinja.palletsprojects.com/en/2.10.x/templates/#builtin-filters

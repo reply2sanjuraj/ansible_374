@@ -1,0 +1,10 @@
+---
+- name: Testing host order
+  hosts: all
+  order: sorted
+  # inventory, reverse_inventory, sorted, reverse_sorted, shuffle
+  tasks:
+  - name: Creating a test file in /tmp
+    copy:
+      content: 'This is a sample file'
+      dest: /tmp/test.out

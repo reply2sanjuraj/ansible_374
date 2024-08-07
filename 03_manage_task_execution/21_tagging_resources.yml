@@ -1,0 +1,28 @@
+---
+# special tags always, never
+# Additional special tags tagged, untagged, all
+# 21_tagging_resources.yml
+
+- name: Install application
+  hosts: localhost
+  vars:
+    packages:
+      - postfix
+      - mariadb-server
+
+  tasks:
+  - name: Ensure that packages are installed
+    yum:
+      name: "{{ packages }}"
+      state: installed
+    tags:  # Tag each task
+    - install
+
+  - name: Include common web services tasks
+  #  include_tasks: common.yml
+    debug:
+      msg: hi
+    tags: # the included task file is tagged
+    - webproxy
+    - webserver
+

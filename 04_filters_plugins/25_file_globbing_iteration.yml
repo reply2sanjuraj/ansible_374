@@ -1,0 +1,28 @@
+---
+- name: Iterating Over a File Globbing Pattern
+  hosts: localhost
+  gather_facts: no
+  tasks:
+
+# lookup plugin provides a string of comma-separated files
+  - name: Test fileglob lookup plugin
+    debug:
+      msg: "{{ lookup('fileglob', '*.pub') }}"   # fileglob lookup plugin
+# auto-detect from files dir
+
+# use the <query> keyword to return a list of values
+  - name: Test fileglob lookup plugin
+    debug:
+      msg: "{{ query('fileglob', '*.pub') }}"  # query to get as list
+
+# To use the data from this lookup plug-in in a <loop>
+  - name: Iteration Option One
+    debug:
+      msg: "{{ item }}"
+    loop: "{{ query('fileglob', '*.pub') }}"  # use query in loop
+
+  - name: Iteration Option Two
+    debug:
+      msg: "{{ item }}"
+    with_fileglob:    # with_fileglob
+      - "*.pub"

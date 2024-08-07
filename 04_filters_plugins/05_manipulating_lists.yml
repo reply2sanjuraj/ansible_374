@@ -1,0 +1,40 @@
+---
+- name: Manipulating Lists
+  hosts: localhost
+  tasks:
+# Extracting list elements
+  - name: All three of these assertions are true
+    assert:
+      that:
+      - "{{ [ 2, 4, 6, 8, 10, 12 ] | length }} is eq( 6 )"  # length
+      - "{{ [ 2, 4, 6, 8, 10, 12 ] | first }} is eq( 2 )"   # first
+      - "{{ [ 2, 4, 6, 8, 10, 12 ] | last }} is eq( 12 )"   # last
+
+  - debug:
+      msg: "{{ ['Douglas', 'Marvin', 'Arthur'] | random }}" # random
+
+# order of list elements reverse, sort, shuffle
+  - name: reversing and sorting lists
+    assert:
+      that:
+      - "{{ [ 2, 4, 6, 8, 10 ] | reverse | list }} is eq( [ 10, 8, 6, 4, 2] )"  # reverse
+      - "{{ [ 4, 8, 10, 6, 2 ] | sort | list }} is eq( [ 2, 4, 6, 8, 10 ] )"    # sort
+
+# Merging lists
+  - name: Flatten turns nested lists on the left to list on the right
+    assert:
+      that:
+      - "{{ [ 2, [4, [6, 8]], 10 ] | flatten }} is eq( [ 2, 4, 6, 8, 10] )"  # flatten
+
+# Operating on lists as sets
+  - name: 'unique' leaves unique elements
+    assert:
+      that:
+      - "{{ [ 1, 1, 2, 2, 2, 3, 4, 4 ] | unique | list }} is eq( [ 1, 2, 3, 4 ] )"
+# union, intersect, difference
+# difference - elements from first set that are not present in the second set.
+  - name: 'difference' provides elements not in specified set
+    assert:
+      that:
+      - "{{ [ 2, 4, 6, 8, 10 ] | difference([2, 4, 6, 16]) }} is eq( [8, 10] )" # difference
+

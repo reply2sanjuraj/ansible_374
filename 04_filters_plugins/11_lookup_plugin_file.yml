@@ -1,0 +1,40 @@
+---
+# ansible-doc -t lookup -l
+# lookup , query
+- name: Calling Lookup Plug-ins
+  hosts: localhost
+  gather_facts: false
+
+# file lookup plug-in to put the contents of the file /etc/hosts into the Ansible variable <myhosts>
+  vars:
+    myhosts: "{{ lookup('file', '/etc/hosts') }}"  # single file
+    # multiple files - values returned being comma-separated
+    hosts: "{{ lookup('file', '/etc/hosts', '/etc/issue') }}"  
+    # query always returns a list, which can be easier to parse and work with
+    vhosts: "{{ query('file', '/etc/hosts', '/etc/issue') }}"  # query 
+  tasks:
+  - debug:
+      var: myhosts
+
+  - debug:
+      var: hosts
+  
+  - debug:
+      var: vhosts
+
+# Reading the Contents of Files
+# If you provide a relative path, the plug-in looks for files in your playbook's <files> directory
+# eg: files/naoko.key.pub
+#- name: Add authorized keys
+#  hosts: localhost
+#  vars:
+#    users:
+#      - fred
+#      - naoko
+#     my_yaml: "{{ lookup('file', '/path/to/my.yaml') | from_yaml }}"
+#  tasks:
+#  - name: Add authorized keys
+#    authorized_key:
+#      user: "{{ item }}"
+#      key: "{{ lookup('file', item + '.key.pub') }}"
+#    loop: "{{ users }}"

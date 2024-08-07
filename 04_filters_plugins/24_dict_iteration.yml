@@ -1,0 +1,48 @@
+---
+- name: Iterating Over a Dictionary
+  hosts: localhost
+  gather_facts: false
+  vars:
+    users:
+      demo1:
+        name: Demo User 1
+        mail: demo1@example.com
+      demo2:
+        name: Demo User 2
+        mail: demo2@example.com
+      demo200:
+        name: Demo User 200
+        mail: demo200@example.com
+  tasks:
+
+# use the with_dict keyword to iterate through the key/value pairs of this dictionary
+  - name: Iterate over Users with_dict
+    user:
+      name: "{{ item.key }}"  # key
+      comment: "{{ item.value.name }}"  # value
+      state: present
+    with_dict: "{{ users }}"  # with_dict
+    check_mode: true
+
+# SAMPLE
+  - debug:
+#      msg: "{{ item.key }} and {{ item.value.name }}"
+      msg: "{{ item }}"
+    with_dict: "{{ users }}"
+
+
+
+  # Alternatively, you can use the dict2items filter to transform a dictionary into a list
+  - name: Iterate over Users using dict2items and loop
+    user:
+      name: "{{ item.key }}"
+      comment: "{{ item.value.name }}"
+      state: present
+    loop: "{{ users | dict2items }}"
+    check_mode: true
+
+# SAMPLE  
+  - debug:
+#      msg: "{{ item.key }} and {{ item.value.name }}"
+      msg: "{{ item }}"
+    loop: "{{ users | dict2items }}"

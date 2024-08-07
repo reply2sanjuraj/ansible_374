@@ -1,0 +1,22 @@
+---
+- name: Processing Data with Filters
+  hosts: localhost
+  gather_facts: false
+  vars:
+    myname: blue
+    mynumber: 20
+  tasks:
+  - debug:
+      msg: "{{ myname | capitalize }}"
+
+  - debug:
+      msg: "{{ mynumber | string }}"
+      #msg: "{{ mynumber }}"
+
+  - name: Test to see if the assertion is true, fail if not
+    assert:
+      that:
+        - "{{ [ 1, 4, 2, 2 ] | unique | sort }}" is eq( [ 1, 2, 4 ] )
+
+# Jinja2 filters document
+# https://jinja.palletsprojects.com/en/2.10.x/templates/#builtin-filters

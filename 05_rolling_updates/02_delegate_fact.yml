@@ -1,0 +1,16 @@
+- name: Delegating Facts
+  hosts: servera,serverb
+  gather_facts: no
+  tasks:
+  - name: delegate fact
+    set_fact:
+      myfact: Where am I set?
+    delegate_to: localhost
+    delegate_facts: True  # delegate facts to delegated host
+
+  - name: Display the facts from servera.lab.example.com
+    debug:
+      msg: "{{ hostvars['localhost']['myfact'] }}"
+
+# Ansible to gather facts into the hostvars['servera.lab.example.com'] namespace
+# instead of the default hostvars['localhost'] namespace

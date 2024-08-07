@@ -1,0 +1,41 @@
+---
+- name: Iterating Over Nested Lists
+  hosts: localhost
+  gather_facts: false
+  vars:
+    john_pass: redhat
+    paul_pass: redhat
+    users:
+      - name: paul
+        password: "{{ paul_pass }}"
+        authorized:
+          - keys/paul_key1.pub
+          - keys/paul_key2.pub
+        mysql:
+          hosts:
+            - "127.0.0.1"
+            - "::1"
+            - "localhost"
+        groups:
+          - wheel
+          - null
+      - name: john
+        password: "{{ john_pass }}"
+        authorized:
+          - keys/john_key.pub
+        mysql:
+          password: other-mysql-password
+          hosts:
+            - "utility"
+        groups:
+          - wheel
+          - devops
+  tasks:
+  - name: Print nested iteration
+    debug:
+#      msg: "{{ item.0.name }} \n {{ lookup('file', item.1) }}"
+#      msg: "{{ item.0.name }} \n {{ item.1 }}"
+      msg: "{{ item.0.mysql.hosts.0 }}"
+    loop: "{{ users | subelements('groups') }}"
+#    loop: "{{ users | subelements('authorized') }}"
+#    loop: "{{ users }}"

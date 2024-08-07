@@ -1,0 +1,48 @@
+---
+# Strings
+my_string: Those are the contents of the string
+string_with_breaks: |
+    This string
+    has several
+    line breaks
+string_without_breaks: >
+    This string will not
+    contain any line breaks.
+    Separated lines are joined
+    by a space character.
+
+# Numbers
+answer: 42 # integer
+float_answer: 42.0  # float
+scientific_answer: 0.42e+2
+hex_answer: 0x2A
+string_not_number: "20"
+
+# Booleans
+key: yes, no, y, n, on, off, true, or false
+# recommendation: use lowercase for consistency
+
+# Date - ISO-8601
+my_simple_date: 2019-05-30
+
+# Null
+my_undefined: null / ~
+
+# Lists or Arrays
+my_list: ['Douglas', 'Marvin', 'Arthur']
+my_list:
+  - Douglas
+  - Marvin
+  - Arthur
+
+# Dictionaries
+my_dict: { Douglas: Human, Marvin: Robot, Arthur: Human }
+my_dict:
+  Douglas: Human
+  Marvin: Robot
+  Arthur: Human
+
+
+# Variable filters and lookup plugin:
+# https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters.html
+# https://docs.ansible.com/ansible/latest/plugins/lookup.html

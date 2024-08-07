@@ -1,0 +1,3 @@
+page 75
+# sudo cgcreate -a user:user -t user:user -g cpuacct,memory,pids:ansible_profile
+# cgexec -g cpuacct,memory,pids:ansible_profile ansible-playbook playbook.yml 
