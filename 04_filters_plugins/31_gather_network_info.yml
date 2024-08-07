@@ -1,0 +1,49 @@
+---
+- name: Gathering and Processing Network Information
+  hosts: localhost
+  gather_facts: false
+  vars:
+    my_hosts_list:
+        - 10.10.10.10
+        - 192.168.1.2/24
+        - 172.15.250.5/8
+        - redhat.com
+        - ibm.com
+  tasks:
+  - name: Collect only network related facts
+    setup:
+      gather_subset:  # collect only network related facts
+        - '!all'
+        - network
+
+  - debug:  # print the facts collected
+      msg:  |
+          "{{ ansible_facts['dns']['nameservers'] }} 
+          {{ ansible_facts['domain'] }}
+          {{ ansible_facts['all_ipv4_addresses'] }}
+          {{ ansible_facts['all_ipv6_addresses'] }}
+          {{ ansible_facts['fqdn'] }}
+          {{ ansible_facts['hostname'] }}"
+
+# ipaddr network informatio filter
+# https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters_ipaddr.html
+  - debug:  # print processed net info
+      msg:  "{{ my_hosts_list | ipaddr }}"  # only ip address from the list
+
+  - debug:  # print processed net info
+      msg:  "{{ my_hosts_list | ipaddr('netmask') }}"  # print netmask
+
+  - debug:  # print processed net info
+      msg:  "{{ my_hosts_list | ipaddr('prefix') }}"  # print netmask
+
+
+# Looking Up DNS Information
+
+  - debug:  # print dns A record
+      msg:  "{{ lookup('dig', 'redhat.com') }}"  # A record by default
+
+  - debug:  # print dns MX record
+#      msg:  "{{ lookup('dig', 'example.com', 'qtype=MX') }}"  # MX record by default
+#      msg: "{{ lookup('dig', 'example.com/MX') }}"
+#      msg: "{{ lookup('dig', 'example.com', '@4.4.8.8,4.4.4.4) }}"  # @dns-server
+#      msg: "{{ query('dig', 'example.com/MX') }}"  # return value as a list using query

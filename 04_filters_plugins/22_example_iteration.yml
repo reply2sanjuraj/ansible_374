@@ -1,0 +1,32 @@
+---
+- name: Example Iteration Scenarios
+  hosts: localhost
+  gather_facts: false
+  vars:
+    app_a_tmp_files:
+      - app1.a.tmp
+      - app2.a.tmp
+    app_b_tmp_files:
+      - app1.b.tmp
+      - app2.b.tmp
+    app_c_tmp_files:
+      - app1.c.tmp
+      - app2.c.tmp
+    list_of_lists:
+      - "{{ app_a_tmp_files }}"   
+      - "{{ app_b_tmp_files }}"  
+      - "{{ app_c_tmp_files }}" 
+  tasks:
+
+  - name: print list with with_items
+    debug:
+      msg: "{{ item }}"
+    with_items:   # with_items
+      - "{{ app_a_tmp_files }}"
+      - "{{ app_b_tmp_files }}"
+      - "{{ app_c_tmp_files }}"
+
+  - name: print tmp files with loop
+    debug:
+      msg: "{{ item }}"
+    loop: "{{ list_of_lists | flatten(levels=1) }}" # loop, flatten list with level 1

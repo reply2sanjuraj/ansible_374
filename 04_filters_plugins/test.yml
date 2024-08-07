@@ -1,0 +1,17 @@
+---
+- name: Processing Data with Filters
+  hosts: localhost
+  vars:
+    myname: blue
+    mynumber: 20
+  tasks:
+  - debug:
+      msg: "{{ myname | capitalize }}"
+
+  - debug:
+      msg: "{{ mynumber | string }}"
+
+  - - name: Test to see if the assertion is true, fail if not
+      assert:
+        that:
+          - "{{ [ 1, 4, 2, 2 ] | unique | sort }} is eq( [ 1, 2, 4 ] )"

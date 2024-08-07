@@ -1,0 +1,21 @@
+---
+- name: Delegating Tasks
+  hosts: webservers          # localhost # eg all
+  gather_facts: false
+  tasks:
+  - name: Get system information
+    command: uname -a
+    register: server
+
+  - name: Display servera system information
+    debug:
+      msg: "{{ server }}"
+  
+  - name: Get system information
+    command: uname -a
+    delegate_to: localhost  # delegate to 
+    register: local
+
+  - name: Display localhost system information
+    debug:
+      msg: "{{ local }}"

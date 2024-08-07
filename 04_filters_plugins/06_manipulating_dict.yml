@@ -1,0 +1,41 @@
+---
+- name: Manipulating Dictionaries
+  hosts: localhost
+  gather_facts: false
+  tasks:
+
+# Joining dictionaries 
+# Entries from the second dictionary have higher priority than entries from the first dictionary
+  - name: 'combine combines two dictionaries into one'
+    vars:
+      expected:
+        A: 1
+        B: 4
+        C: 5
+    assert:
+      that:
+      - "{{ {'A':1,'B':2} | combine({'B':4,'C':5}) }} is eq( expected )"  # combine
+
+# Reshaping dictionaries
+  - name: converting between dictionaries and lists
+    vars:
+      characters_dict:
+        Douglas: Human
+        Marvin: Robot
+        Arthur: Human
+      characters_items:
+        - key: Douglas
+          value: Human
+        - key: Marvin
+          value: Robot
+        - key: Arthur
+          value: Human
+    assert:
+      that:
+      - "{{ characters_dict | dict2items }} is eq( characters_items )"
+      - "{{ characters_items | items2dict }} is eq( characters_dict )"
+
+      
+
+# Jinja2 filters document
+# https://jinja.palletsprojects.com/en/2.10.x/templates/#builtin-filters

@@ -1,0 +1,21 @@
+---
+- name: Selected Filters
+  hosts: localhost
+  gather_facts: false
+  vars: 
+    my_value: value
+    my_var: value
+  tasks:
+  - debug:
+      msg: "{{ my_value | mandatory }}"
+
+  - debug:
+      msg: "{{ my_var | default('my_default', True) }}"
+
+#the value to remain undefined if it had no value initially
+  - debug:
+      msg: "{{ my_ops | default(omit) }}"
+
+
+# Jinja2 filters document
+# https://jinja.palletsprojects.com/en/2.10.x/templates/#builtin-filters

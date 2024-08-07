@@ -1,0 +1,5 @@
+---
+- hosts: localhost
+  tasks:
+  - debug:
+      msg: "{{ [ 2, 4, 6, 8, 10 ] | difference([2, 4, 6, 16]) }}"

@@ -1,0 +1,46 @@
+---
+- name: Hashing, Encoding, and Manipulating Strings
+  hosts: localhost
+  gather_facts: false
+  tasks:
+
+# Hashing strings and passwords
+  - name: the string's SHA-1 hash
+    vars:
+      expected: '8bae3f7d0a461488ced07b3e10ab80d018eb1d8c'
+    assert:
+      that:
+      - "'{{ 'Arthur' | hash('sha1') }}' is eq( expected )"   # hash('alg')
+  
+  - debug:
+      msg: "{{ 'secret_password' | password_hash('sha512') }}"   # password_hash('alg')
+
+# Encoding strings
+  - name: Base64 encoding and decoding of values
+    assert:
+      that:
+      - "'{{ 'âÉïôú' | b64encode }}' is eq( 'w6LDicOvw7TDug==' )"  # b64encode
+      - "'{{ 'w6LDicOvw7TDug==' | b64decode }}' is eq( 'âÉïôú' )"  # b64decode
+
+  - name: Put quotes around my_string
+    shell: echo {{ my_string | quote }}   # quote
+    vars:
+      my_string: Hello World!
+
+# Formatting Text
+  - name: Change case of characters
+    assert:
+      that:
+      - "'{{ 'Marvin' | lower }}' is eq( 'marvin' )"   # lower
+      - "'{{ 'Marvin' | upper }}' is eq( 'MARVIN' )"   # upper
+      - "'{{ 'marvin' | capitalize }}' is eq( 'Marvin' )"  # capitalize
+
+# Replacing text
+  - name: Replace ar with asterisks
+    assert:
+      that:
+      - "'{{ 'marvin, arthur' | replace('ar','**') }}' is eq( 'm**vin, **thur' )"
+
+
+# Jinja2 filters document
+# https://jinja.palletsprojects.com/en/2.10.x/templates/#builtin-filters

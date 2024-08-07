@@ -1,0 +1,30 @@
+---
+# ansible-doc -t lookup -l
+- name: Implementing Advanced Loops
+  hosts: localhost
+  gather_facts: false
+  vars:
+    mylist:
+      - alpha
+      - beta
+      - gamma
+  tasks:
+  - name: using loop
+    debug:
+      msg: "{{ item }}"
+    loop: "{{ mylist }}"
+
+  - name: using with_list
+    debug:
+      msg: "{{ item }}"
+    with_list: "{{ mylist }}"
+
+  - name: using lookup plugin
+    debug:
+      msg: "{{ item }}"
+    loop: "{{ lookup('list', mylist) }}"
+
+# No need to memorize or find a with_* style keyword
+# Focus on learning the plug-ins and filters that are available in Ansible
+# You have command-line access to the lookup plug-in documentation,
+# with the ansible-doc -t lookup command
