@@ -1,0 +1,43 @@
+---
+- name: Executing a role as a task
+  hosts: webservers
+  roles:
+  - role: usercreation
+    become: true
+
+  pre_tasks:
+  - name: A pre task
+    debug:
+      msg: 'pre task'
+    notify: restart db
+
+  post_tasks:
+  - name: A post task
+    debug:
+      msg: 'post task'
+  
+  tasks:
+  - name: A normal task
+    debug:
+      msg: 'first task'
+
+  - shell: id
+    notify: restart db
+
+  - name: Running all notified handlers
+    meta: flush_handlers
+  - block:
+    - name: A task to include role2 here
+      include_role:
+        name: usercreation
+    become: true
+
+  handlers:
+  - name: restart db
+    debug:
+      msg: 'server restarting'
+
+  - name: Listening to a notification
+    debug:
+      msg: First handler was notified
+    listen: restart db

@@ -1,0 +1,6 @@
+---
+# tasks file for john.webapp
+- name: Deploy apache
+  ansible.builtin.yum:
+    name: httpd
+    state: present

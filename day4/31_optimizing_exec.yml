@@ -1,0 +1,13 @@
+---
+- name: Demonstrate disabling the facts gathering
+  hosts: webservers
+  gather_facts: False # disables facts gathering
+  tasks:
+  - debug:
+      msg: "gather_facts is set to False"
+
+# use inventory_hostname instead of ansible_facts['hostname'] 
+# fork recomendation
+# https://docs.ansible.com/ansible-tower/3.4.3/html/userguide/jobs.html#at-capacity-determination-and-job-impact
+# 100MB per fork
+# 4 forks per CPU

@@ -1,0 +1,10 @@
+---
+- name: Play with two tasks, one uses privilege escalation
+  hosts: all
+  become: false
+  tasks:
+  - name: This task needs privileges
+    yum:
+      name: perl
+      state: installed
+    become: true # Privilege Escalation in Task

@@ -1,0 +1,41 @@
+---
+- name: Deploy web services
+  hosts: webservers
+  become: false
+  tasks:
+  - block:
+    - name: Ensure httpd is installed
+      ansible.builtin.yum:
+        name: httpd
+        state: installed
+
+    - name: Start and enable webserver
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Open the ports
+      ansible.posix.firewalld:
+        service: http
+        immediate: true
+        permanent: true
+        state: enabled
+
+    - name: Content to serve
+      ansible.builtin.copy:
+        content: "Welcome to {{ ansible_host }}\n"
+        dest: /var/www/html/index.html
+
+    become: true # Privilege Escalation in Blocks
+
+  - name: Test website from itself, do not become
+    ansible.builtin.uri:
+      url: http://{{ ansible_host }}
+      return_content: yes
+    register: webpage
+    failed_when: webpage.status != 200
+
+  - name: Display result
+    ansible.builtin.debug:
+      var: webpage.content

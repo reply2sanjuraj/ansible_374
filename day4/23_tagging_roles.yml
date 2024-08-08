@@ -1,0 +1,13 @@
+---
+- name: Install application
+  hosts: webservers
+  become: true
+  vars:
+    packages:
+      - postfix
+      - mariadb-server
+  roles:
+    - role: usercreation
+      tags:  # Tag a role
+      - production
+

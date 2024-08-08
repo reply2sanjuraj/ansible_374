@@ -1,0 +1,23 @@
+---
+- name: Become the user "manager"
+  hosts: webservers
+  become: true # enabled Privilege Escalation
+  tasks:
+  - name: Show the user used by this play
+    debug:
+      var: ansible_user_id
+
+- name: Do not use privilege escalation
+  hosts: webservers
+  become: false # disabled Privilege Escalation
+  tasks:
+  - name: Show the user used by this play
+    debug:
+      var: ansible_user_id
+
+- name: Use privilege escalation based on defaults
+  hosts: webservers # not specified Privilege Escalation, using from ansible.cfg or from the cmdline.
+  tasks:
+  - name: Show the user used by this play
+    debug:
+      var: ansible_user_id

@@ -1,0 +1,5 @@
+- name: Example play with one role
+  hosts: webservers
+  roles:
+  - role: usercreation
+    become: true # Privilege Escalation in Roles
