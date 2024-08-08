@@ -1,0 +1,41 @@
+---
+- name: Upgrade Web Application
+  hosts: web_servers
+  become: true
+  vars:
+    webapp_version: v1.1
+  max_fail_percentage: 0
+  serial:
+    - "5%"
+    - "35%"
+    - "100%"
+  # TODO: Configure max allowable failures
+  # TODO: Configure batches
+
+  # TODO: Add a pre-task to disable each web server
+  pre_tasks:
+    - name: Remove web server from service during the update
+      community.general.haproxy:
+        state: disabled
+        backend: app
+        host: "{{ inventory_hostname }}"
+      delegate_to: "{{ groups['lb_servers'][0] }}"
+
+  roles:
+    - role: webapp
+
+  post_tasks:
+    - name: Smoke Test - Ensure HTTP 200 OK
+      ansible.builtin.uri:
+        url: "http://{{ inventory_hostname }}:{{ apache_port }}"
+        status_code: 200
+      become: false
+      delegate_to: "{{ groups['lb_servers'][0] }}"
+
+    # TODO: Add a post-task to re-enable each web server
+    - name: Enable healthy server in load balancers
+      community.general.haproxy:
+        state: enabled
+        backend: app
+        host: "{{ inventory_hostname }}"
+      delegate_to: "{{ groups['lb_servers'][0] }}"
