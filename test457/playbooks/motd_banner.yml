@@ -1,0 +1,34 @@
+---
+- name: Configure motd banner for texas
+  hosts: texas
+  gather_facts: false
+  tasks:
+  - name: Gather fatcs for cisco 
+    when: ansible_network_os == 'cisco.ios.ios'
+    cisco.ios.ios_facts:
+      gather_subset: all
+  - name: Set the banner for cisco 
+    when: ansible_network_os == 'cisco.ios.ios'
+    cisco.ios.ios_banner:
+      banner: motd
+      text: "Welcome to {{ inventory_hostname }} mode {{ ansible_facts['net_model'] }}"
+      state: present
+    notify: ios_save_changes
+
+  - name: Gather facts for eos 
+    when: ansible_network_os == 'arista.eos.eos'
+    arista.eos.eos_facts:
+      gather_subset: all
+
+  - name: Set the banner for eos
+    when: ansible_network_os == 'arista.eos.eos'
+    arista.eos.eos_banner:
+      banner: motd
+      text: "Welcome to {{ inventory_hostname }} model {{ ansible_facts['net_model'] }}"
+      state: present
+
+  handlers:
+  - name: ios_save_changes
+    cisco.ios.ios_config:
+      save_when: always
+...

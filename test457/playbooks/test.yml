@@ -1,0 +1,7 @@
+---
+- name: Test
+  remote_user: student
+  hosts: all
+  roles:
+  - pink_milk
+...

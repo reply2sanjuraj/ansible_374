@@ -1,0 +1,71 @@
+---
+- name: Identify and fix ntp
+  hosts: tokyo
+  gather_facts: false
+  vars:
+    authorized_ntp_servers:
+    - "172.25.254.254"
+    - "172.25.250.254"
+  tasks:
+  - name: Collect current settings for cisco 
+    when:
+    - ansible_network_os == 'cisco.ios.ios'
+    - inventory_hostname == 'iosxe2.lab.example.com'
+    cisco.ios.ios_command:
+      commands: 
+      - show run | include ^ntp server
+    register: ntp_ios_output
+
+  - name: Create the ios file 
+    when:
+    - ansible_network_os == 'cisco.ios.ios'
+    - inventory_hostname == 'iosxe2.lab.example.com'
+    ansible.builtin.lineinfile:
+      line: "{{ ntp_ios_output.stdout[0] }}"
+      state: present
+      path: "{{ inventory_hostname }}.txt"
+      create: yes
+
+  - name: Collect current settings for eos 
+    when:
+    - ansible_network_os == 'arista.eos.eos'
+    - inventory_hostname == 'arista2.lab.example.com'
+    arista.eos.eos_command:
+      commands: 
+      - show run | include ^ntp server
+    register: ntp_eos_output
+
+  - name: Create the eos file 
+    when:
+    - ansible_network_os == 'arista.eos.eos'
+    - inventory_hostname == 'arista2.lab.example.com'
+    ansible.builtin.lineinfile:
+      line: "{{ ntp_eos_output.stdout[0] }}"
+      state: present
+      path: "{{ inventory_hostname }}.txt"
+      create: yes
+
+  - name: Extract the ips 
+    set_fact:
+      myips: "{{ lookup('file', '{{ inventory_hostname }}.txt') | regex_findall('\\b(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\b') }}"
+
+  - name: Find bogus ntp
+    set_fact:
+      bogus_ntp: "{{ myips | difference(authorized_ntp_servers) }}"
+
+  - name: Remove bogus ntp server from cisco
+    when:
+    - ansible_network_os == 'cisco.ios.ios'
+    - inventory_hostname == 'iosxe2.lab.example.com'
+    - bogus_ntp | length > 0
+    cisco.ios.ios_config:
+      lines: "{{ bogus_ntp | map('regex_replace', '^(.*)$', 'no ntp server \\1') | list }}"
+
+  - name: Remove bogus ntp server from eos
+    when:
+    - ansible_network_os == 'arista.eos.eos'
+    - inventory_hostname == 'arista2.lab.example.com'
+    - bogus_ntp | length > 0
+    arista.eos.eos_config:
+      lines: "{{ bogus_ntp | map('regex_replace', '^(.*)$', 'no ntp server \\1') | list }}"
+...

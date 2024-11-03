@@ -1,0 +1,59 @@
+---
+# tasks file for pink_milk
+- name: Create a user for cisco 
+  vars:
+    net_admin: 'ciscouser'
+  ansible.builtin.user:
+    name: "{{ net_admin }}"
+    state: present
+    ssh_key_file: /home/student/.ssh/lab_rsa
+  when:
+  - inventory_hostname in groups['cisco']
+
+- name: Create a user for eos
+  vars:
+    net_admin: 'eosuser'
+  ansible.builtin.user:
+    name: "{{ net_admin }}"
+    state: present
+    ssh_key_file: /home/student/.ssh/lab_rsa
+  when:
+  - inventory_hostname in groups['eos']
+
+- name: Create a user for junos 
+  vars:
+    net_admin: 'junosuser'
+  ansible.builtin.user:
+    name: "{{ net_admin }}"
+    state: present
+    ssh_key_file: /home/student/.ssh/lab_rsa
+  when:
+  - inventory_hostname in groups['junos']
+
+
+- name: Create a user for vyos
+  vars:
+    net_admin: 'singtouser'
+    net_password: 'compedel18'
+    ansible_connection: 'ansible.netcommon.network_cli'
+    ansible_network_os: 'vyos.vyos.vyos'
+  ansible.builtin.user:
+    name: "{{ net_admin }}"
+    password: "{{ net_password | password_hash('sha512') }}"
+    state: present
+    ssh_key_file: /home/student/.ssh/lab_rsa
+  when:
+  - inventory_hostname == 'vyos1.lab.example.com' 
+
+- name: Create a login banner for vyos
+  vars:
+    ansible_connection: 'ansible.netcommon.network_cli'
+    ansible_network_os: 'vyos.vyos.vyos'
+  vyos.vyos.vyos_banner:
+    banner: post-login
+    text: "Michael Jackson rocks"
+    state: present
+  when:
+  - inventory_hostname == 'vyos1.lab.example.com' 
+
+

@@ -1,0 +1,38 @@
+---
+- name: backup of cisco and eos 
+  hosts: cisco,eos
+  gather_facts: false
+  tasks:
+  - name: backup of the cisco device
+    when: ansible_network_os == 'cisco.ios.ios'
+    cisco.ios.ios_config:
+      backup: yes
+    register: backup_ios_location
+
+  - name: backup of the eos device
+    when: ansible_network_os == 'arista.eos.eos'
+    arista.eos.eos_config:
+      backup: yes
+    register: backup_eos_location
+
+  - name: Create the directory
+    ansible.builtin.file:
+      path: "/home/student/net_backups"
+      state: directory
+    delegate_to: workstation.lab.example.com
+    run_once: true
+
+  - name: Save the cisco backup
+    when: ansible_network_os == 'cisco.ios.ios'
+    ansible.builtin.copy:
+      content: "{{ backup_ios_location.backup_path }}"
+      dest: "/home/student/net_backups/{{ inventory_hostname }}.txt"
+    delegate_to: workstation.lab.example.com
+
+  - name: Save the eos backup
+    when: ansible_network_os == 'arista.eos.eos'
+    ansible.builtin.copy:
+      content: "{{ backup_eos_location.backup_path }}"
+      dest: "/home/student/net_backups/{{ inventory_hostname }}.txt"
+    delegate_to: workstation.lab.example.com
+...
